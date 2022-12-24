@@ -2,3 +2,4 @@
 # run the cmd: ```pip install -r requirements.txt```
 cryptography
 python-dotenv
+pwinput
