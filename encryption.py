@@ -27,7 +27,7 @@ def format_time(time:float):
     This method formats a given time in sec and returns a str for it.
     For example, 
     >>> format_time(time=46)
-        '45 s'
+        '46 s'
     >>> format_time(time=67)
         '1m 7s'
     >>> format_time(time=130)
