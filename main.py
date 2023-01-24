@@ -52,7 +52,7 @@ def _decrypt(fernet_file:Path, path:Path=CWD):
 
 def main():
     
-    fernet_key_file = INDRAJIT_FERNET_KEY_FILE
+    fernet_key_file = INDRAJIT_FERNET_KEY_FILE # Set it None at the time of distribution
     fernet_key_file = Path(fernet_key_file) if fernet_key_file is not None else DEFAULT_FERNET_KEY_FILE
     
     # If `fernet_key_file` not exists then create a new fernet key file
