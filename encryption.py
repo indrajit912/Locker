@@ -97,6 +97,10 @@ class ByteSize(int):
         return self.__class__(super().__rmul__(other)) 
 
 
+def generate_fernet_key():
+    return Fernet.generate_key()
+
+
 def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
     """
     Encrypts a file using Fernet.
