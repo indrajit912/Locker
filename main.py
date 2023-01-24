@@ -5,13 +5,15 @@
 # Created on: Dec 24, 2022
 #
 
-from encryption import encrypt_file, encrypt_dir
+from encryption import encrypt_file, encrypt_dir, generate_fernet_key
 from decryption import decrypt_file, decrypt_dir
 from authentication import save_password, input_secret_key
 from pathlib import Path
 import sys
 
+DEFAULT_RSA_KEYS_DIR = Path(__file__).resolve().parent / ".rsa_keys"
 INDRAJIT_FERNET_KEY_FILE = Path(__file__).resolve().parent / "rsa_keys/fernet.key"
+DEFAULT_FERNET_KEY_FILE = DEFAULT_RSA_KEYS_DIR / 'fernet.key'
 DOT_ENV_FILE = Path(__file__).parent.resolve() / '.env'
 CWD = Path.cwd()
 
@@ -51,6 +53,22 @@ def _decrypt(fernet_file:Path, path:Path=CWD):
 def main():
     
     fernet_key_file = INDRAJIT_FERNET_KEY_FILE
+    fernet_key_file = Path(fernet_key_file) if fernet_key_file is not None else DEFAULT_FERNET_KEY_FILE
+    
+    # If `fernet_key_file` not exists then create a new fernet key file
+    # at the `./rsa_keys/fernet.key`
+    if not fernet_key_file.exists():
+        # Generate fernet keys
+        fernet_key = generate_fernet_key()
+
+        # Create `.rsa_keys` dir 
+        if not DEFAULT_RSA_KEYS_DIR.exists():
+            DEFAULT_RSA_KEYS_DIR.mkdir()
+
+        # Save the fernet key for future use
+        with open(DEFAULT_FERNET_KEY_FILE, 'wb') as f:
+            f.write(fernet_key)
+
 
     # Take input properly
     crypto = sys.argv[1]
