@@ -2,6 +2,7 @@
 
 ### Python ###
 rsa_keys/
+.rsa_keys/
 target_dir/
 .sync/
 # Byte-compiled / optimized / DLL files
