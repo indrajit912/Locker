@@ -11,6 +11,10 @@ import sys, os, time
 from cryptography.fernet import Fernet
 
 CWD = Path.cwd()
+KB = 1024
+ONE_MB = 1024 * KB
+ONE_GB = 1024 * ONE_MB
+TWO_GB = 2 * ONE_GB
 
 THIS_SCRIPT = Path(__file__).absolute()
 MAIN_DOT_PY = THIS_SCRIPT.resolve().parent / 'main.py'
@@ -124,12 +128,19 @@ def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
     fer = Fernet(fernet_key)
 
     # encrypt the file with fernet key
-    msg = open(filepath, 'rb').read()
-    msg_encrypted = fer.encrypt(data=msg)
+    file_size_before = filepath.stat().st_size # File size before encryption
 
-    # save the encrypted file
-    with open(filepath, 'wb') as f:
-        f.write(msg_encrypted)
+    if file_size_before >= TWO_GB:
+        # If the file is bigger than 2GB then don't encrypt
+        print(f"\n >>> SKIPPED_BIG_FILE: The following file has been skipped due to a file size > 2GB:\n - {filepath}\n")
+        print_status = False
+    else:
+        msg = open(filepath, 'rb').read()
+        msg_encrypted = fer.encrypt(data=msg)
+
+        # save the encrypted file
+        with open(filepath, 'wb') as f:
+            f.write(msg_encrypted)
 
     size_after_encryption = filepath.stat().st_size # File size after encryption
         
