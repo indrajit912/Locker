@@ -9,6 +9,7 @@ from pathlib import Path
 import sys, os, time
 
 from cryptography.fernet import Fernet
+from cryptography.fernet import InvalidToken
 
 CWD = Path.cwd()
 KB = 1024

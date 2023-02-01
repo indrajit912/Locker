@@ -23,14 +23,18 @@ def decrypt_file(encrypted_file:Path, fernet_file:Path, print_status=True):
 
     # Getting original message
     fer = Fernet(fernet_key)
-    original_message = fer.decrypt(encrypted_message)
+    try:
+        original_message = fer.decrypt(encrypted_message)
+    
+        # print(original_message.decode())
+        with open(encrypted_file, 'wb') as f:
+            f.write(original_message)
 
-    # print(original_message.decode())
-    with open(encrypted_file, 'wb') as f:
-        f.write(original_message)
-
-    if print_status:
-        print("File Decrypted!")
+        if print_status:
+            print("File Decrypted!")
+    
+    except InvalidToken:
+        print(f"\nERROR: The following file might be non-encrypted or encrypted with different Fernet key:\n - {encrypted_file}\n")
 
 
 def decrypt_dir(root_dir:Path, fernet_file:Path):
