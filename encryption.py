@@ -132,6 +132,7 @@ def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
     file_size_before = filepath.stat().st_size # File size before encryption
 
     if file_size_before >= TWO_GB:
+        # TODO: for bigger file use compressing that file and then encrypt.
         # If the file is bigger than 2GB then don't encrypt
         print(f"\n >>> SKIPPED_BIG_FILE: The following file has been skipped due to a file size > 2GB:\n - {filepath}\n")
         print_status = False
