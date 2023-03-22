@@ -5,7 +5,8 @@
 # Created on: Mar 22, 2023
 #
 
-import string, time, shutil
+import string, time, shutil, errno
+from distutils.dir_util import copy_tree
 from itertools import product
 from pathlib import Path, PurePath
 
@@ -69,13 +70,16 @@ def trap(item:Path=None, pin:str="0123"):
     _create_directory_trap(target=trap_dir, depth=len(pin), symbols=DIGITS)
 
     trap_loc = _create_path_from_str(dir=trap_dir, s=pin)
-    shutil.copy(src=item, dst=trap_loc)
+    if item.is_file():
+        shutil.copy(src=item, dst=trap_loc)
+    else:
+        copy_tree(src=str(item), dst=str(trap_loc))
 
     print(f"\n The item has been trapped inside the dir\n {trap_dir}\nwith the pin {pin}.\n")
     
 
 def main():
-    file = "main.py"
+    file = Path.home() / "Downloads/test"
     my_pin = 3892
 
     t1 = time.time()
