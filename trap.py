@@ -1,4 +1,4 @@
-# recursive_dir.py - Descriptions
+# A script that can "trap" any file or dir with a pin.
 #
 # Author: Indrajit Ghosh
 #
@@ -76,9 +76,10 @@ def trap(item:Path=None, pin:str="0123"):
 
 def main():
     file = "main.py"
+    my_pin = 3892
 
     t1 = time.time()
-    trap(item=file, pin=36748)
+    trap(item=file, pin=my_pin)
     t2 = time.time()
 
     print(f"\n Total time taken: {t2-t1} secs.\n")
