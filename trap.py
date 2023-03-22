@@ -5,7 +5,7 @@
 # Created on: Mar 22, 2023
 #
 
-import string, time, shutil, errno
+import string, time, shutil
 from distutils.dir_util import copy_tree
 from itertools import product
 from pathlib import Path, PurePath
@@ -80,7 +80,7 @@ def trap(item:Path=None, pin:str="0123"):
 
 def main():
     file = Path.home() / "Downloads/test"
-    my_pin = 3892
+    my_pin = 873
 
     t1 = time.time()
     trap(item=file, pin=my_pin)
