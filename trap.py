@@ -80,7 +80,7 @@ def trap(item:Path=None, pin:str="0123"):
 
 def main():
     file = Path.home() / "Downloads/test"
-    my_pin = '0912'
+    my_pin = str(input("Enter a pin: "))
 
     t1 = time.time()
     trap(item=file, pin=my_pin)
