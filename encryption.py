@@ -20,6 +20,7 @@ TWO_GB = 2 * ONE_GB
 THIS_SCRIPT = Path(__file__).absolute()
 MAIN_DOT_PY = THIS_SCRIPT.resolve().parent / 'main.py'
 DOT_ENCRYPTED_FILENAME = '.encrypted'
+MARKER = b'ENCRYPTED_BY_INDRAJIT\n'
 
 NOT_TO_ENCRYPT = [
     THIS_SCRIPT,
@@ -106,6 +107,15 @@ def generate_fernet_key():
     return Fernet.generate_key()
 
 
+def is_file_encrypted(filepath):
+    try:
+        with open(filepath, 'rb') as file:
+            marker_check = file.read(len(MARKER))
+            return marker_check == MARKER
+    except FileNotFoundError:
+        return False
+
+
 def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
     """
     Encrypts a file using Fernet.
@@ -128,6 +138,11 @@ def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
     # creating Fernet object
     fer = Fernet(fernet_key)
 
+    # Check if the file is already encrypted
+    if is_file_encrypted(filepath):
+        print(f"NOT_IMPLEMENTED_ERR: The file {filepath} is already encrypted.")
+        return 0  # You may want to return something here to indicate the encryption status
+
     # encrypt the file with fernet key
     file_size_before = filepath.stat().st_size # File size before encryption
 
@@ -143,7 +158,7 @@ def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
 
         # save the encrypted file
         with open(filepath, 'wb') as f:
-            f.write(msg_encrypted)
+            f.write(MARKER + msg_encrypted)
 
     size_after_encryption = filepath.stat().st_size # File size after encryption
         
@@ -255,7 +270,9 @@ def encrypt_dir(root_dir:Path, fernet_file:Path, silent=False):
 
 
 def main():
-    print('Encryption!')
+    print('Python Script for Encryption!')
+    from main import INDRAJIT_FERNET_KEY_FILE
+    encrypt_file(filepath='spam.mkv', fernet_file=INDRAJIT_FERNET_KEY_FILE)
 
 
 if __name__ == '__main__':

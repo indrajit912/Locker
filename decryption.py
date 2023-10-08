@@ -14,9 +14,14 @@ def decrypt_file(encrypted_file:Path, fernet_file:Path, print_status=True):
     """
     encrypted_file = Path(encrypted_file)
 
-    # getting the encrypted message
+    # Check if the file is encrypted
+    if not is_file_encrypted(encrypted_file):
+        print(f"The file {encrypted_file} is not encrypted or encrypted with a different marker.")
+        return
+
+    # Getting the encrypted message without the marker
     with open(encrypted_file, 'rb') as f:
-        encrypted_message = f.read()
+        encrypted_message = f.read()[len(MARKER):]
 
 
     fernet_key = open(fernet_file, 'rb').read()
@@ -81,7 +86,9 @@ def decrypt_dir(root_dir:Path, fernet_file:Path):
 
 
 def main():
-    print('Decryption!')
+    print('Python Script for Decryption!')
+    from main import INDRAJIT_FERNET_KEY_FILE
+    decrypt_file(encrypted_file='spam.mkv', fernet_file=INDRAJIT_FERNET_KEY_FILE)
 
 
 if __name__ == '__main__':
