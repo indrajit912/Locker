@@ -141,7 +141,7 @@ def encrypt_file(filepath:Path, fernet_file:Path, print_status=True):
     # Check if the file is already encrypted
     if is_file_encrypted(filepath):
         print(f"NOT_IMPLEMENTED_ERR: The file {filepath} is already encrypted.")
-        return 0  # You may want to return something here to indicate the encryption status
+        return -1  # You may want to return something here to indicate the encryption status
 
     # encrypt the file with fernet key
     file_size_before = filepath.stat().st_size # File size before encryption
@@ -234,19 +234,8 @@ def encrypt_dir(root_dir:Path, fernet_file:Path, silent=False):
     root_dir = Path(root_dir)
     already_encrypted = 0
 
-    # Writing the `.encrypted` file; this file contains either 1 or 0 
-    # accordingly the dir is encrypted or not: 1: True , 0: False
-    dot_enc_file = root_dir / DOT_ENCRYPTED_FILENAME
-        
-    if dot_enc_file.exists():
-        already_encrypted = int(open(dot_enc_file).read())
-        if already_encrypted:
-            print(f"WARNING: The directory '{root_dir.name}' is already encrypted!\n")
-            sys.exit()
-
-
     # Encrypt the dir
-    _ignore = [dot_enc_file]
+    _ignore = []
 
     t1 = time.time()
     total_encrypted_files, encrypted_data_size = _encrypt_dir_tree(
@@ -254,10 +243,6 @@ def encrypt_dir(root_dir:Path, fernet_file:Path, silent=False):
     )
     t2 = time.time()
     time_taken = format_time(t2-t1)
-
-    # Change the status in `.encrypted`
-    with open(dot_enc_file, 'w') as f:
-        f.write('1')
 
 
     if not silent:
@@ -268,11 +253,8 @@ def encrypt_dir(root_dir:Path, fernet_file:Path, silent=False):
         print("\nCheers!\n\nFrom,\nIndrajit\n")
 
 
-
 def main():
     print('Python Script for Encryption!')
-    from main import INDRAJIT_FERNET_KEY_FILE
-    encrypt_file(filepath='spam.mkv', fernet_file=INDRAJIT_FERNET_KEY_FILE)
 
 
 if __name__ == '__main__':
