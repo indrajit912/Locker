@@ -86,7 +86,7 @@ def trap(item:Path=None, pin:str="0123"):
 
         print(f"\n The item has been trapped inside the dir\n {trap_dir}\nwith the pin {pin}.\n")
     else:
-        print(f"\n A `trapped` directory has been created of depth {len(pin)}!\n")
+        print(f"\n A `trapped` directory has been created of depth {len(pin)}.\n")
 
     
 
