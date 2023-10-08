@@ -5,7 +5,7 @@
 # Created on: Mar 22, 2023
 #
 
-import string, time, shutil
+import string, time, shutil, sys
 from distutils.dir_util import copy_tree
 from itertools import product
 from pathlib import Path, PurePath
@@ -64,30 +64,41 @@ def _create_directory_trap(target:Path, depth:int=2, symbols:list=["A", "B", "C"
 def trap(item:Path=None, pin:str="0123"):
     """
     Traps the `item`.
+    If the `item` is a file then this function copy the file into trapped/pin
+    if the `item` is a directory then it copies the whole directory into trapped/pin
     """
     pin = str(pin)
     trap_dir = Path.cwd() / "trapped"
     _create_directory_trap(target=trap_dir, depth=len(pin), symbols=DIGITS)
 
+    item = Path(item).absolute()
+
     trap_loc = _create_path_from_str(dir=trap_dir, s=pin)
     if item.is_file():
         shutil.copy(src=item, dst=trap_loc)
     else:
-        copy_tree(src=str(item), dst=str(trap_loc))
+        dst_dir = trap_loc / item.name
+        if not dst_dir.exists():
+            dst_dir.mkdir()
+        copy_tree(src=str(item), dst=str(dst_dir))
 
     print(f"\n The item has been trapped inside the dir\n {trap_dir}\nwith the pin {pin}.\n")
     
 
 def main():
-    file = Path.home() / "Downloads/test"
-    my_pin = str(input("Enter a pin: "))
+    # Check if there are enough command-line arguments
+    if len(sys.argv) != 3:
+        print("Usage: python script.py <item_path> <pin>")
+        sys.exit(1)
+
+    item_path = Path(sys.argv[1])
+    my_pin = sys.argv[2]
 
     t1 = time.time()
-    trap(item=file, pin=my_pin)
+    trap(item=item_path, pin=my_pin)
     t2 = time.time()
 
     print(f"\n Total time taken: {t2-t1} secs.\n")
-
 
 if __name__ == '__main__':
     main()
