@@ -5,7 +5,7 @@
 # Created on: Mar 22, 2023
 #
 
-import string, time, shutil, sys
+import string, time, shutil, sys, argparse
 from distutils.dir_util import copy_tree
 from itertools import product
 from pathlib import Path, PurePath
@@ -71,34 +71,52 @@ def trap(item:Path=None, pin:str="0123"):
     trap_dir = Path.cwd() / "trapped"
     _create_directory_trap(target=trap_dir, depth=len(pin), symbols=DIGITS)
 
-    item = Path(item).absolute()
+    if item is not None:
 
-    trap_loc = _create_path_from_str(dir=trap_dir, s=pin)
-    if item.is_file():
-        shutil.copy(src=item, dst=trap_loc)
+        item = Path(item).absolute()
+
+        trap_loc = _create_path_from_str(dir=trap_dir, s=pin)
+        if item.is_file():
+            shutil.copy(src=item, dst=trap_loc)
+        else:
+            dst_dir = trap_loc / item.name
+            if not dst_dir.exists():
+                dst_dir.mkdir()
+            copy_tree(src=str(item), dst=str(dst_dir))
+
+        print(f"\n The item has been trapped inside the dir\n {trap_dir}\nwith the pin {pin}.\n")
     else:
-        dst_dir = trap_loc / item.name
-        if not dst_dir.exists():
-            dst_dir.mkdir()
-        copy_tree(src=str(item), dst=str(dst_dir))
+        print(f"\n A `trapped` directory has been created of depth {len(pin)}!\n")
 
-    print(f"\n The item has been trapped inside the dir\n {trap_dir}\nwith the pin {pin}.\n")
     
 
 def main():
-    # Check if there are enough command-line arguments
-    if len(sys.argv) != 3:
-        print("Usage: python script.py <item_path> <pin>")
+    # Create an ArgumentParser object
+    parser = argparse.ArgumentParser(description="Description of your script")
+
+    # Add the -f or --file option with a default value of None
+    parser.add_argument('-f', '--file', help='Path to the item file', default=None)
+
+    # Add the -p or --pin option
+    parser.add_argument('-p', '--pin', help='PIN')
+
+    # Parse the command-line arguments
+    args = parser.parse_args()
+
+    # Check if the -p option is provided
+    if not args.pin:
+        print("Usage: python script.py -p <pin>")
         sys.exit(1)
 
-    item_path = Path(sys.argv[1])
-    my_pin = sys.argv[2]
+    item_path = Path(args.file) if args.file else None
+    my_pin = args.pin
 
     t1 = time.time()
+    # Call your trap function here with item_path and my_pin
     trap(item=item_path, pin=my_pin)
     t2 = time.time()
 
-    print(f"\n Total time taken: {t2-t1} secs.\n")
+    print(f"\n Total time taken: {t2 - t1} secs.\n")
 
 if __name__ == '__main__':
     main()
